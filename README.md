@@ -1,5 +1,9 @@
-# rate
 Golang rate limiter for distributed system
+======
+[![Build Status](https://travis-ci.org/wallstreetcn/rate.svg?branch=master)](https://travis-ci.org/wallstreetcn/rate)
+[![Coverage Status](https://coveralls.io/repos/github/wallstreetcn/rate/badge.svg?branch=master)](https://coveralls.io/github/wallstreetcn/rate?branch=master)
+[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/wallstreetcn/rate/master/LICENSE)
+
 
 ## Implementation
 According to [Stripe's rate-limiters practice](https://stripe.com/blog/rate-limiters), use `Redis Server` & `Lua Script` to implement a rate limiter based on [token bucket algorithm](https://en.wikipedia.org/wiki/Token_bucket).
