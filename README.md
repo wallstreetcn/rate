@@ -2,6 +2,7 @@ Golang rate limiter for distributed system
 ======
 [![Build Status](https://travis-ci.org/wallstreetcn/rate.svg?branch=master)](https://travis-ci.org/wallstreetcn/rate)
 [![Coverage Status](https://coveralls.io/repos/github/wallstreetcn/rate/badge.svg?branch=master)](https://coveralls.io/github/wallstreetcn/rate?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/wallstreetcn/rate)](https://goreportcard.com/report/github.com/wallstreetcn/rate)
 [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/wallstreetcn/rate/master/LICENSE)
 
 
