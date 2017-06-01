@@ -15,8 +15,8 @@ type ConfigRedis struct {
 	IdleTimeout int    `yaml:"idle_timeout"`
 }
 
-// NewRedisClient constructs a redis client.
-func NewRedisClient(config ConfigRedis) *redis.Client {
+// newRedisClient constructs a redis client.
+func newRedisClient(config ConfigRedis) *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", config.Host, config.Port),
 		Password: config.Auth,

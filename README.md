@@ -16,15 +16,27 @@ go get "github.com/wallstreetcn/rate"
 
 ## Usage
 ```go
+import (
+    rate "github.com/wallstreetcn/rate/redis"
+)
+
 // initialize redis.
-SetClient(NewRedisClient(ConfigRedis{
+rate.SetRedis(&rate.ConfigRedis{
     Host: "127.0.0.1",
     Port: 6379,
     Auth: "",
-}))
+}
 
 // setup a 1 ops/s rate limiter.
-limiter := NewLimiter(Every(time.Second), 1, "a-sample-operation")
+limiter := rate.NewLimiter(Every(time.Second), 1, "a-sample-operation")
+if limiter.Allow() {
+    // serve the user request
+} else {
+    // reject the user request
+}
+
+// setup a 1000 ops/s rate limiter.
+limiter := rate.NewLimiter(Every(time.Second/time.Duration(1000)), 1000, "a-sample-operation")
 if limiter.Allow() {
     // serve the user request
 } else {

@@ -58,13 +58,17 @@ func Client() *redis.Client {
 	return redisClient
 }
 
-// SetClient sets the redis client.
-func SetClient(client *redis.Client) error {
-	if client == nil {
+// SetRedis sets the redis client.
+func SetRedis(config *ConfigRedis) error {
+	if config == nil {
+		return errors.New("redis config is empty")
+	}
+
+	redisClient = newRedisClient(*config)
+	if redisClient == nil {
 		return errors.New("redis client is nil")
 	}
 
-	redisClient = client
 	scriptHash = fmt.Sprintf("%x", sha1.Sum([]byte(script)))
 	exists, err := redisClient.ScriptExists(scriptHash).Result()
 	if err != nil {

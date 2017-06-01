@@ -12,11 +12,11 @@ import (
 )
 
 func setup() {
-	if err := SetClient(NewRedisClient(ConfigRedis{
+	if err := SetRedis(&ConfigRedis{
 		Host: "127.0.0.1",
 		Port: 6379,
 		Auth: "",
-	})); err != nil {
+	}); err != nil {
 		panic(fmt.Sprintf("fail to initialize redis client: %v", err))
 	}
 }
