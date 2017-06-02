@@ -151,7 +151,7 @@ func (lim *Limiter) reserveN(now time.Time, n int) Reservation {
 	results, err := redisClient.EvalSha(
 		scriptHash,
 		[]string{lim.key + ".tokens", lim.key + ".ts"},
-		int(lim.limit),
+		float64(lim.limit),
 		lim.burst,
 		now.Unix(),
 		n,

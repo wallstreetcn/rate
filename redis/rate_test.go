@@ -41,6 +41,18 @@ func Test1QPS(t *testing.T) {
 	assert.False(t, limiter.Allow(), "second access should be rejected")
 }
 
+func Test1QP2S(t *testing.T) {
+	assert.NotNil(t, Client(), "redis client should not be empty")
+
+	limiter := NewLimiter(Every(2*time.Second), 1, "test")
+	assert.NotNil(t, limiter)
+
+	assert.True(t, limiter.Allow(), "first access should be allowed")
+	assert.False(t, limiter.Allow(), "second access should be rejected")
+	<-time.After(2 * time.Second)
+	assert.True(t, limiter.Allow(), "third access should be allowed")
+}
+
 func Test10QPS(t *testing.T) {
 	assert.NotNil(t, Client(), "redis client should not be empty")
 
