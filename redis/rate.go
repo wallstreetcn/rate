@@ -69,6 +69,23 @@ func SetRedis(config *ConfigRedis) error {
 		return errors.New("redis client is nil")
 	}
 
+	go func() {
+		timer := time.NewTicker(5 * time.Second)
+		for {
+			select {
+			case <-timer.C:
+				loadScript()
+			}
+		}
+	}()
+	return loadScript()
+}
+
+func loadScript() error {
+	if redisClient == nil {
+		return errors.New("redis client is nil")
+	}
+
 	scriptHash = fmt.Sprintf("%x", sha1.Sum([]byte(script)))
 	exists, err := redisClient.ScriptExists(scriptHash).Result()
 	if err != nil {
