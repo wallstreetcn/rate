@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 func Test1QPS(t *testing.T) {
 	assert.NotNil(t, Client(), "redis client should not be empty")
 
-	limiter := NewLimiter(Every(time.Second), 1, "test")
+	limiter := NewLimiter(Every(time.Second), 1, "Test1QPS")
 	assert.NotNil(t, limiter)
 
 	assert.True(t, limiter.Allow(), "first access should be allowed")
@@ -44,7 +44,7 @@ func Test1QPS(t *testing.T) {
 func Test1QP2S(t *testing.T) {
 	assert.NotNil(t, Client(), "redis client should not be empty")
 
-	limiter := NewLimiter(Every(2*time.Second), 1, "test")
+	limiter := NewLimiter(Every(2*time.Second), 1, "Test1QP2S")
 	assert.NotNil(t, limiter)
 
 	assert.True(t, limiter.Allow(), "first access should be allowed")
@@ -56,7 +56,7 @@ func Test1QP2S(t *testing.T) {
 func Test10QPS(t *testing.T) {
 	assert.NotNil(t, Client(), "redis client should not be empty")
 
-	limiter := NewLimiter(Every(100*time.Millisecond), 10, "10QPS")
+	limiter := NewLimiter(Every(100*time.Millisecond), 10, "Test10QPS")
 	assert.NotNil(t, limiter)
 
 	for i := 0; i < 10; i++ {
@@ -72,7 +72,7 @@ func TestConcurrent10QPS(t *testing.T) {
 	var limiters []*Limiter
 
 	for i := 0; i < count; i++ {
-		limiters = append(limiters, NewLimiter(Every(100*time.Millisecond), 10, "10ConcurrentQPS"))
+		limiters = append(limiters, NewLimiter(Every(100*time.Millisecond), 10, "TestConcurrent10QPS"))
 		assert.NotNil(t, limiters[i])
 	}
 
