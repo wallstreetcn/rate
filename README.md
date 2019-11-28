@@ -28,7 +28,7 @@ rate.SetRedis(&rate.ConfigRedis{
 }
 
 // setup a 1 ops/s rate limiter.
-limiter := rate.NewLimiter(Every(time.Second), 1, "a-sample-operation")
+limiter := rate.NewLimiter(rate.Every(time.Second), 1, "a-sample-operation")
 if limiter.Allow() {
     // serve the user request
 } else {
@@ -36,7 +36,7 @@ if limiter.Allow() {
 }
 
 // setup a 1000 ops/s rate limiter.
-limiter := rate.NewLimiter(Every(time.Second/time.Duration(1000)), 1000, "a-sample-operation")
+limiter := rate.NewLimiter(rate.Every(time.Second/time.Duration(1000)), 1000, "a-sample-operation")
 if limiter.Allow() {
     // serve the user request
 } else {
