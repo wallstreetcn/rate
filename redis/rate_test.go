@@ -8,15 +8,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 )
 
 func setup() {
-	if err := SetRedis(&ConfigRedis{
-		Host: "127.0.0.1",
-		Port: 6379,
-		Auth: "",
-	}); err != nil {
+	if err := SetRedis(redis.NewClient(&redis.Options{
+		Addr:     "127.0.0.1:6379",
+		Password: "",
+	})); err != nil {
 		panic(fmt.Sprintf("fail to initialize redis client: %v", err))
 	}
 }

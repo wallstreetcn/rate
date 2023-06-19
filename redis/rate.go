@@ -2,6 +2,7 @@
 package redis
 
 import (
+	"context"
 	"crypto/sha1"
 	"errors"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 	"math"
 	"time"
 
-	redis "github.com/go-redis/redis"
+	"github.com/redis/go-redis/v9"
 )
 
 var (
@@ -59,7 +60,7 @@ func Client() *redis.Client {
 }
 
 // SetRedis sets the redis client.
-func SetRedis(config *ConfigRedis) error {
+func SetRedisWithConfig(config *ConfigRedis) error {
 	if config == nil {
 		return errors.New("redis config is empty")
 	}
@@ -71,11 +72,23 @@ func SetRedis(config *ConfigRedis) error {
 
 	go func() {
 		timer := time.NewTicker(5 * time.Second)
-		for {
-			select {
-			case <-timer.C:
-				loadScript()
-			}
+		for range timer.C {
+			loadScript()
+		}
+	}()
+	return loadScript()
+}
+
+// SetRedis sets the redis client.
+func SetRedis(redisClient *redis.Client) error {
+	if redisClient == nil {
+		return errors.New("redis client is nil")
+	}
+
+	go func() {
+		timer := time.NewTicker(5 * time.Second)
+		for range timer.C {
+			loadScript()
 		}
 	}()
 	return loadScript()
@@ -87,14 +100,14 @@ func loadScript() error {
 	}
 
 	scriptHash = fmt.Sprintf("%x", sha1.Sum([]byte(script)))
-	exists, err := redisClient.ScriptExists(scriptHash).Result()
+	exists, err := redisClient.ScriptExists(context.Background(), scriptHash).Result()
 	if err != nil {
 		return err
 	}
 
 	// load script when missing.
 	if !exists[0] {
-		_, err := redisClient.ScriptLoad(script).Result()
+		_, err := redisClient.ScriptLoad(context.Background(), script).Result()
 		if err != nil {
 			return err
 		}
@@ -166,6 +179,7 @@ func (lim *Limiter) reserveN(now time.Time, n int) Reservation {
 	}
 
 	results, err := redisClient.EvalSha(
+		context.Background(),
 		scriptHash,
 		[]string{lim.key + ".tokens", lim.key + ".ts"},
 		float64(lim.limit),

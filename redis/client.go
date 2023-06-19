@@ -1,32 +1,39 @@
 package redis
 
 import (
-	"fmt"
+	"context"
 	"log"
 
-	redis "github.com/go-redis/redis"
+	"github.com/redis/go-redis/v9"
 )
 
 // ConfigRedis sets the Redis.
 type ConfigRedis struct {
-	Host        string `yaml:"host"`
-	Port        int    `yaml:"port"`
-	Auth        string `yaml:"auth"`
+	Addr        string `yaml:"addr"` // host:port
+	Password    string `yaml:"password"`
 	IdleTimeout int    `yaml:"idle_timeout"`
 }
 
 // newRedisClient constructs a redis client.
 func newRedisClient(config ConfigRedis) *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", config.Host, config.Port),
-		Password: config.Auth,
+		Addr:     config.Addr,
+		Password: config.Password,
 		PoolSize: 200,
 	})
 
-	if _, err := client.Ping().Result(); err != nil {
-		log.Println("fail to initialize redis client: ", err)
-		client = nil
+	err := checkRedisClient(client)
+	if err != nil {
+		return nil
 	}
-
 	return client
+}
+
+// check redis client connection.
+func checkRedisClient(client *redis.Client) error {
+	if _, err := client.Ping(context.Background()).Result(); err != nil {
+		log.Println("fail to ping redis client: ", err)
+		return err
+	}
+	return nil
 }
