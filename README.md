@@ -8,16 +8,18 @@ Golang rate limiter for distributed system
 
 ## Implementation
 According to [Stripe's rate-limiters practice](https://stripe.com/blog/rate-limiters), use `Redis Server` & `Lua Script` to implement a rate limiter based on [token bucket algorithm](https://en.wikipedia.org/wiki/Token_bucket).
+在github.com/wallstreetcn/rate的基础上适配了codis和最新版本的redis客户端。
 
 ## Install
+~~go get "github.com/wallstreetcn/rate"~~
 ```shell
-go get "github.com/wallstreetcn/rate"
+go get "github.com/bigo-sg/rate"
 ```
 
 ## Usage
 ```go
 import (
-    rate "github.com/wallstreetcn/rate/redis"
+    rate "github.com/bigo-sg/rate/redis"
 )
 
 // initialize redis.

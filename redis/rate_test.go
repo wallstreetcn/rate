@@ -2,23 +2,35 @@
 package redis
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"sync"
 	"testing"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 )
 
 func setup() {
-	if err := SetRedis(&ConfigRedis{
-		Host: "127.0.0.1",
-		Port: 6379,
-		Auth: "",
-	}); err != nil {
+	ring := redis.NewRing(&redis.RingOptions{
+		Addrs:    map[string]string{"server1": "localhost:6379"},
+		Password: "",
+	})
+
+	_, err := ring.Ping(context.Background()).Result()
+	if err != nil {
+		panic(fmt.Sprintf("fail to ping redis client: %v", err))
+	}
+
+	if err := SetRedisClient(ring); err != nil {
 		panic(fmt.Sprintf("fail to initialize redis client: %v", err))
 	}
+}
+
+func TestRedisClient(t *testing.T) {
+	setup()
 }
 
 func teardown() {
@@ -32,7 +44,7 @@ func TestMain(m *testing.M) {
 }
 
 func Test1QPS(t *testing.T) {
-	assert.NotNil(t, Client(), "redis client should not be empty")
+	assert.NotNil(t, redisClient, "redis client should not be empty")
 
 	limiter := NewLimiter(Every(time.Second), 1, "Test1QPS")
 	assert.NotNil(t, limiter)
@@ -42,7 +54,7 @@ func Test1QPS(t *testing.T) {
 }
 
 func Test1QP2S(t *testing.T) {
-	assert.NotNil(t, Client(), "redis client should not be empty")
+	assert.NotNil(t, redisClient, "redis client should not be empty")
 
 	limiter := NewLimiter(Every(2*time.Second), 1, "Test1QP2S")
 	assert.NotNil(t, limiter)
@@ -54,7 +66,7 @@ func Test1QP2S(t *testing.T) {
 }
 
 func Test10QPS(t *testing.T) {
-	assert.NotNil(t, Client(), "redis client should not be empty")
+	assert.NotNil(t, redisClient, "redis client should not be empty")
 
 	limiter := NewLimiter(Every(100*time.Millisecond), 10, "Test10QPS")
 	assert.NotNil(t, limiter)
@@ -66,7 +78,7 @@ func Test10QPS(t *testing.T) {
 }
 
 func TestConcurrent10QPS(t *testing.T) {
-	assert.NotNil(t, Client(), "redis client should not be empty")
+	assert.NotNil(t, redisClient, "redis client should not be empty")
 
 	var count = 5
 	var limiters []*Limiter
